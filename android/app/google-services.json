@@ -1,0 +1,40 @@
+{
+    "project_info": {
+        "project_number": "456437644706",
+        "project_id": "fchat-8d600",
+        "storage_bucket": "fchat-8d600.appspot.com"
+    },
+    "client": [{
+        "client_info": {
+            "mobilesdk_app_id": "1:456437644706:android:5aa7a2934f16c7a3c306fb",
+            "android_client_info": {
+                "package_name": "com.example.fchat"
+            }
+        },
+        "oauth_client": [{
+                "client_id": "456437644706-6bit468nkf190m2fghpldrfunik1lste.apps.googleusercontent.com",
+                "client_type": 1,
+                "android_info": {
+                    "package_name": "com.example.fchat",
+                    "certificate_hash": "7a4e2b8b961aef467bac27d44c9b41c62c41db0f"
+                }
+            },
+            {
+                "client_id": "456437644706-2d2d5umuk5jehb733ojqhaup18m6tpob.apps.googleusercontent.com",
+                "client_type": 3
+            }
+        ],
+        "api_key": [{
+            "current_key": "AIzaSyCbMJdKz2wgSBgaMpD94NjReic9bKz7lRM"
+        }],
+        "services": {
+            "appinvite_service": {
+                "other_platform_oauth_client": [{
+                    "client_id": "456437644706-2d2d5umuk5jehb733ojqhaup18m6tpob.apps.googleusercontent.com",
+                    "client_type": 3
+                }]
+            }
+        }
+    }],
+    "configuration_version": "1"
+}
