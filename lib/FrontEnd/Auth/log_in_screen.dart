@@ -1,9 +1,13 @@
+import 'package:fchat/BackEnd/Firebase/Auth/sign_up_auth_firebase.dart';
+import 'package:fchat/FrontEnd/home_page.dart';
+import 'package:fchat/global_utils/enum_genaration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../global_utils/reg_exp.dart';
 import 'common_auth_methods.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -14,89 +18,98 @@ class LogInScreen extends StatefulWidget {
 
 class _LogInScreenState extends State<LogInScreen> {
   final GlobalKey<FormState> _signInformKey = GlobalKey<FormState>();
+
   final TextEditingController _email = TextEditingController();
   final TextEditingController _pwd = TextEditingController();
+
+  final EmailAndPasswordAuth _emailAndPasswordAuth = EmailAndPasswordAuth();
+
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         // backgroundColor: Color.fromARGB(255, 247, 210, 210),
-        body: ListView(
-          padding: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-          shrinkWrap: true,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30.0),
-                color: Color.fromARGB(188, 132, 243, 117),
-              ),
-              child: Image(
-                image: AssetImage(
-                  "assets/images/fchat.png",
+        body: LoadingOverlay(
+          isLoading: this.isLoading,
+          child: ListView(
+            padding: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+            shrinkWrap: true,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30.0),
+                  color: Color.fromARGB(188, 132, 243, 117),
                 ),
-                height: 280.0,
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Center(
-              child: Text(
-                "Sign In".toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 23.0,
-                  //color: Colors.white,
+                child: Image(
+                  image: AssetImage(
+                    "assets/images/fchat.png",
+                  ),
+                  height: 280.0,
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                top: 15.0,
+              SizedBox(
+                height: 10.0,
               ),
-              height: MediaQuery.of(context).size.height / 2.60,
-              width: MediaQuery.of(context).size.width,
-              child: Form(
-                key: this._signInformKey,
-                child: ListView(
-                  children: [
-                    CommonTextFormField(
-                      hintText: "E-Mail",
-                      labelText: "E-Mail",
-                      prefixIcon: Icon(Icons.email_outlined),
-                      validator: (String? inputVal) {
-                        if (!emailRegex.hasMatch(inputVal.toString()))
-                          return "Email Formate Not Matching";
-                        return null;
-                      },
-                      textEditingController: _email,
-                    ),
-                    CommonTextFormField(
-                      hintText: "Password",
-                      labelText: "Password",
-                      prefixIcon: Icon(Icons.fingerprint),
-                      validator: (String? inputVal) {
-                        if (inputVal!.length < 6)
-                          return "Password Length must be 6 charecters";
-                        return null;
-                      },
-                      textEditingController: _pwd,
-                    ),
-                    SignInButton(context, "Log In")
-                  ],
+              Center(
+                child: Text(
+                  "Sign In".toUpperCase(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 23.0,
+                    //color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            Center(
-              child: Text(
-                "OR",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Container(
+                padding: EdgeInsets.only(
+                  top: 15.0,
+                ),
+                height: MediaQuery.of(context).size.height / 2.60,
+                width: MediaQuery.of(context).size.width,
+                child: Form(
+                  key: this._signInformKey,
+                  child: ListView(
+                    children: [
+                      CommonTextFormField(
+                        hintText: "E-Mail",
+                        labelText: "E-Mail",
+                        prefixIcon: Icon(Icons.email_outlined),
+                        validator: (String? inputVal) {
+                          if (!emailRegex.hasMatch(inputVal.toString()))
+                            return "Email Formate Not Matching";
+                          return null;
+                        },
+                        textEditingController: _email,
+                      ),
+                      CommonTextFormField(
+                        hintText: "Password",
+                        labelText: "Password",
+                        prefixIcon: Icon(Icons.fingerprint),
+                        validator: (String? inputVal) {
+                          if (inputVal!.length < 6)
+                            return "Password Length must be 6 charecters";
+                          return null;
+                        },
+                        textEditingController: _pwd,
+                      ),
+                      SignInButton(context, "Log In")
+                    ],
+                  ),
+                ),
               ),
-            ),
-            SocialMeatiaIntegrationButtons(),
-            SwitchAnotherAuthScreen(
-                context, "Don't have a Account?", "Sign Up"),
-          ],
+              Center(
+                child: Text(
+                  "OR",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              SocialMeatiaIntegrationButtons(),
+              SwitchAnotherAuthScreen(
+                  context, "Don't have a Account?", "Sign Up"),
+            ],
+          ),
         ),
       ),
     );
@@ -116,10 +129,45 @@ class _LogInScreenState extends State<LogInScreen> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (_signInformKey.currentState!.validate()) {
           print("Validated");
           SystemChannels.textInput.invokeMethod('TextInput.hide');
+          if (mounted) {
+            setState(() {
+              isLoading = true;
+            });
+          }
+
+          final EmailSignInResults emailSignInResults =
+              await this._emailAndPasswordAuth.LogInAuthFirebase(
+                    email: this._email.text,
+                    pwd: this._pwd.text,
+                  );
+          String msg = "";
+          if (emailSignInResults == EmailSignInResults.SignInCompleted) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => HomePage()),
+                (route) => false);
+          } else if (emailSignInResults ==
+              EmailSignInResults.EmailNotVerified) {
+            msg =
+                'Email not Verified.\nPlease Verify your email and then Log In';
+          } else if (emailSignInResults ==
+              EmailSignInResults.EmailOrPasswordInvalid)
+            msg = 'Email And Password Invalid';
+          else
+            msg = 'Sign In Not Completed';
+
+          if (msg != '')
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(msg)));
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
         } else {
           print("Not Validated");
         }

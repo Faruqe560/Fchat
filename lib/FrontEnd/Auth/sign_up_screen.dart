@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import '../../global_utils/enum_genaration.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -83,9 +85,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           validator: (String? inputVal) {
                             if (inputVal!.length < 6)
                               return "Password Length must be 6 charecters";
+
                             return null;
                           },
-                          textEditingController: _pwd),
+                          textEditingController: this._pwd),
                       CommonTextFormField(
                           hintText: "Confirm Password",
                           labelText: "Confirm Password",
@@ -93,9 +96,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           validator: (String? inputVal) {
                             if (inputVal!.length < 6)
                               return "Password Length must be 6 charecters";
+                            if (this._pwd.text != this._confirmPwd.text)
+                              return "Password and confirm Password not same Here.";
                             return null;
                           },
-                          textEditingController: _confirmPwd),
+                          textEditingController: this._confirmPwd),
                       SignUpButton(context, "Sign Up")
                     ],
                   ),
@@ -134,21 +139,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
       onPressed: () async {
         if (this._signUpformKey.currentState!.validate()) {
           print("Validated");
+          if (mounted) {
+            setState(() {
+              this.isLoading = true;
+            });
+          }
           SystemChannels.textInput.invokeMethod('TextInput.hide');
-          final bool response =
-              await this._emailAndPasswordAuth.signUpAuthFirebase(
-                    email: this._email.text,
-                    pwd: this._pwd.text,
-                  );
-          if (response) {
+          final response = await this._emailAndPasswordAuth.signUpAuthFirebase(
+                email: this._email.text,
+                pwd: this._pwd.text,
+              );
+          if (response == EmailSignUpResults.SignUpCompleted) {
             Navigator.push(
                 context, MaterialPageRoute(builder: (_) => LogInScreen()));
           } else {
+            final String msg =
+                response == EmailSignUpResults.EmailAlreadyPresent
+                    ? "Email Already Present Here"
+                    : "Sign Up Not Completed";
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("data")));
+                .showSnackBar(SnackBar(content: Text(msg)));
           }
         } else {
           print("Not Validated");
+        }
+        if (mounted) {
+          setState(() {
+            this.isLoading = false;
+          });
         }
       },
     );

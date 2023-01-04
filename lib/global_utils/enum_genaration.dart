@@ -3,5 +3,12 @@ import 'package:flutter/material.dart';
 enum EmailSignUpResults {
   SignUpCompleted,
   EmailAlreadyPresent,
-  ProblemInSignUp,
+  SignUpNotCompleted,
+}
+
+enum EmailSignInResults {
+  SignInCompleted,
+  EmailNotVerified,
+  EmailOrPasswordInvalid,
+  UnexpectedError,
 }
