@@ -99,4 +99,7 @@ Widget CommonTextFormField({
     ),
   );
 }
+
 //So I have found the solution. On windows, open terminal and write "cd C:\Users\put_here_your_username\.android" and then write "keytool -list -v -keystore ".\debug.keystore" -alias androiddebugkey -storepass android -keypass android"
+//
+class FacebookLogInScreen {}

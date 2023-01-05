@@ -1,7 +1,7 @@
 import 'package:fchat/BackEnd/Firebase/Auth/sign_up_and_sign_in_auth_firebase.dart';
 import 'package:fchat/FrontEnd/Auth/common_auth_methods.dart';
 import 'package:fchat/FrontEnd/Auth/log_in_screen.dart';
-import 'package:fchat/FrontEnd/home_page.dart';
+import 'package:fchat/FrontEnd/main_screens/home_page.dart';
 import 'package:fchat/global_utils/reg_exp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +9,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 
 import '../../BackEnd/Firebase/Auth/google_auth_firebase.dart';
 import '../../global_utils/enum_genaration.dart';
+import '../new_users_entry/new_users_entry.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -210,7 +211,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             if (_googleSignInResults == GoogleSignInResults.SignInCompleted)
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(
+                      builder: (context) => TakePrimaryUserData()),
                   (route) => false);
             if (mounted) {
               setState(() {

@@ -1,5 +1,5 @@
 import 'package:fchat/BackEnd/Firebase/Auth/sign_up_and_sign_in_auth_firebase.dart';
-import 'package:fchat/FrontEnd/home_page.dart';
+import 'package:fchat/FrontEnd/main_screens/home_page.dart';
 import 'package:fchat/global_utils/enum_genaration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../../BackEnd/Firebase/Auth/google_auth_firebase.dart';
 import '../../global_utils/reg_exp.dart';
+import '../new_users_entry/new_users_entry.dart';
 import 'common_auth_methods.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
@@ -150,7 +151,7 @@ class _LogInScreenState extends State<LogInScreen> {
           if (emailSignInResults == EmailSignInResults.SignInCompleted) {
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => HomePage()),
+                MaterialPageRoute(builder: (_) => TakePrimaryUserData()),
                 (route) => false);
           } else if (emailSignInResults ==
               EmailSignInResults.EmailNotVerified) {
@@ -211,7 +212,8 @@ class _LogInScreenState extends State<LogInScreen> {
             if (_googleSignInResults == GoogleSignInResults.SignInCompleted)
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(
+                      builder: (context) => TakePrimaryUserData()),
                   (route) => false);
             if (mounted) {
               setState(() {
@@ -227,6 +229,35 @@ class _LogInScreenState extends State<LogInScreen> {
         GestureDetector(
           onTap: () {
             print("Facebook Preshed");
+            showModalBottomSheet(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0)),
+                context: context,
+                builder: (context) => Container(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Not Completed Yet",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 25.0),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 26.0),
+                                ))
+                          ],
+                        ),
+                      ),
+                    ));
           },
           child: Image(
             image: AssetImage("assets/images/facebooklogo.png"),
