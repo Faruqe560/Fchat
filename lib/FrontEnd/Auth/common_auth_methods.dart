@@ -31,31 +31,31 @@ Widget SwitchAnotherAuthScreen(
       ));
 }
 
-Widget SocialMeatiaIntegrationButtons() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    children: [
-      GestureDetector(
-        onTap: () {
-          print("Google Preshed");
-        },
-        child: Image(
-          image: AssetImage("assets/images/googlelogo.png"),
-          width: 50.0,
-        ),
-      ),
-      GestureDetector(
-        onTap: () {
-          print("Facebook Preshed");
-        },
-        child: Image(
-          image: AssetImage("assets/images/facebooklogo.png"),
-          width: 50.0,
-        ),
-      ),
-    ],
-  );
-}
+// Widget SocialMeatiaIntegrationButtons() {
+//   return Row(
+//     mainAxisAlignment: MainAxisAlignment.spaceAround,
+//     children: [
+//       GestureDetector(
+//         onTap: () {
+//           print("Google Preshed");
+//         },
+//         child: Image(
+//           image: AssetImage("assets/images/googlelogo.png"),
+//           width: 50.0,
+//         ),
+//       ),
+//       GestureDetector(
+//         onTap: () {
+//           print("Facebook Preshed");
+//         },
+//         child: Image(
+//           image: AssetImage("assets/images/facebooklogo.png"),
+//           width: 50.0,
+//         ),
+//       ),
+//     ],
+//   );
+// }
 
 // Widget SignInAndSignUpButton(BuildContext context, String buttonName) {
 //   return ElevatedButton(

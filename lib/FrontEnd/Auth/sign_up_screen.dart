@@ -1,11 +1,13 @@
-import 'package:fchat/BackEnd/Firebase/Auth/sign_up_auth_firebase.dart';
+import 'package:fchat/BackEnd/Firebase/Auth/sign_up_and_sign_in_auth_firebase.dart';
 import 'package:fchat/FrontEnd/Auth/common_auth_methods.dart';
 import 'package:fchat/FrontEnd/Auth/log_in_screen.dart';
+import 'package:fchat/FrontEnd/home_page.dart';
 import 'package:fchat/global_utils/reg_exp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import '../../BackEnd/Firebase/Auth/google_auth_firebase.dart';
 import '../../global_utils/enum_genaration.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _confirmPwd = TextEditingController();
   bool isLoading = false;
   final EmailAndPasswordAuth _emailAndPasswordAuth = EmailAndPasswordAuth();
+  final GoogleAuthentication _googleAuthentication = GoogleAuthentication();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -112,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              SocialMeatiaIntegrationButtons(),
+              SignUpSocialMeatiaIntegrationButtons(),
               SwitchAnotherAuthScreen(
                   context, "Already have an account?", "Log In")
             ],
@@ -169,6 +172,67 @@ class _SignUpScreenState extends State<SignUpScreen> {
           });
         }
       },
+    );
+  }
+
+  ///////
+  ///
+  ///
+  ///
+  Widget SignUpSocialMeatiaIntegrationButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        GestureDetector(
+          onTap: () async {
+            print("Google Preshed");
+            if (mounted) {
+              setState(() {
+                this.isLoading = true;
+              });
+            }
+            final GoogleSignInResults _googleSignInResults =
+                await this._googleAuthentication.sighInWithGoogle();
+            String msg = "";
+            if (_googleSignInResults == GoogleSignInResults.SignInCompleted)
+              msg = "Sign In Completed";
+            else if (_googleSignInResults ==
+                GoogleSignInResults.SignInNotCompleted)
+              msg = "Sign In Not Completed";
+            else if (_googleSignInResults ==
+                GoogleSignInResults.AlreadySignedIn)
+              msg = "Already Google Sign In";
+            else
+              msg = "Unexpected Error Happen";
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(msg)));
+
+            if (_googleSignInResults == GoogleSignInResults.SignInCompleted)
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false);
+            if (mounted) {
+              setState(() {
+                this.isLoading = false;
+              });
+            }
+          },
+          child: Image(
+            image: AssetImage("assets/images/googlelogo.png"),
+            width: 50.0,
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            print("Facebook Preshed");
+          },
+          child: Image(
+            image: AssetImage("assets/images/facebooklogo.png"),
+            width: 50.0,
+          ),
+        ),
+      ],
     );
   }
 }
